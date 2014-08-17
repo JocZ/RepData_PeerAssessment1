@@ -2,13 +2,18 @@
 
 
 ## Loading and preprocessing the data
-script to read de data set
+script to read de data set from a zip file
 
 
 ```r
-w <- read.csv("activity.csv", header = T, )
+w <- read.csv(unz("activity.zip", "activity.csv"))
 library(ggplot2)
 library(lattice)
+Sys.setlocale("LC_TIME", "English")
+```
+
+```
+## [1] "English_United States.1252"
 ```
 
 
@@ -146,14 +151,20 @@ length(w[w$steps == "NA", 1])
 ```
 
 The missing values are replaced with the mean value for 5 minutes interval.A new data frame were created.
+first we calculate the mean for the specific interval of time
 
+```r
+avera5 = tapply(w$steps, w$interval, mean, na.rm = T)
+```
+
+then, substitute the missing values with the mean of the specific interval of time
 
 ```r
 w2 <- w
 
 for (i in 1:17568) {
     if (is.na(w2[i, 1])) {
-        w2[i, 1] = mean(d, na.rm = T)/288
+        w2[i, 1] = avera5[w2[i, 3]]
     }
 }
 ```
@@ -163,11 +174,17 @@ The new values for mean and median are:
 
 ```r
 d2 <- tapply(w2$steps, w2$date, sum)
+hist(d2, main = "Number of steps per day", xlab = "steps", col = "blue", breaks = 5)
+```
+
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
+
+```r
 mean(d2)
 ```
 
 ```
-## [1] 10581
+## [1] 10766
 ```
 
 ```r
@@ -175,10 +192,10 @@ median(d2)
 ```
 
 ```
-## [1] 10395
+## [1] 10766
 ```
 
-The mean values are different but the median are the same 
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -189,10 +206,10 @@ In order to make the two sets of data:
 
 w2$day <- weekdays(w2$date)
 
-wk <- subset(w2, day == "sábado" | day == "domingo", select = c(interval, steps))
+wk <- subset(w2, day == "Saturday" | day == "Sunday", select = c(interval, steps))
 
-wkd <- subset(w2, day == "lunes" | day == "martes" | day == "miércoles" | day == 
-    "jueves" | day == "viernes", select = c(interval, steps))
+wkd <- subset(w2, day == "Monday" | day == "Tuesday" | day == "Wednesday" | 
+    day == "Thursday" | day == "Friday", select = c(interval, steps))
 ```
 
 
@@ -230,7 +247,8 @@ plot(five1$interval, five1$steps, type = "l", main = "Weekday", xlab = "Interval
     ylab = "", col = "blue")
 ```
 
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
 
 
-
+The graphic shows that the most active period of time during weekends are during the first hours in the morning aproximatly from 8:00 to 10:00 am. 
+while during weedays the activity are more variable during the working hours. 
