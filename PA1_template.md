@@ -213,7 +213,7 @@ wkd <- subset(w2, day == "Monday" | day == "Tuesday" | day == "Wednesday" |
 ```
 
 
-For weekdays:
+For weekends:
 
 ```r
 five1 <- tapply(wk$steps, wk$interval, mean)
@@ -223,7 +223,7 @@ colnames(five1) <- c("interval", "steps")
 ```
 
 
-for weekends:
+for weedays:
 
 ```r
 five2 <- tapply(wkd$steps, wkd$interval, mean)
@@ -235,20 +235,15 @@ colnames(five2) <- c("interval", "steps")
 Comparing the two sets of data
 
 
-
 ```r
-par(mfrow = c(2, 1))
-par(mar = c(4, 4, 2, 2))
-
-plot(five2$interval, five2$steps, type = "l", main = "Weekend", xlab = "", ylab = "Steps", 
-    col = "blue")
-
-plot(five1$interval, five1$steps, type = "l", main = "Weekday", xlab = "Interval", 
-    ylab = "", col = "blue")
+five1$wkd = "weekend"
+five2$wkd = "weekday"
+plt = rbind(five1, five2)
+xyplot(steps ~ interval | wkd, layout = c(1, 2), typ = "l", data = plt)
 ```
 
 ![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
 
 
-The graphic shows that the most active period of time during weekends are during the first hours in the morning aproximatly from 8:00 to 10:00 am. 
-while during weedays the activity are more variable during the working hours. 
+The graphic shows that the most active period of time during weekdays are during the first hours in the morning aproximatly from 8:00 to 10:00 am. 
+while during weekends the activity are more variable across the day. 
